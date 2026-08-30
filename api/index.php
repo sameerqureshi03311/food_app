@@ -5,6 +5,11 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
+// Force HTTPS scheme on Vercel serverless functions
+$_SERVER['HTTPS'] = 'on';
+$_SERVER['SERVER_PORT'] = 443;
+$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
+
 $storagePath = '/tmp/storage';
 $bootstrapCachePath = '/tmp/bootstrap/cache';
 
