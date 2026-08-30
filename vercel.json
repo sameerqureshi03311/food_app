@@ -37,7 +37,7 @@
     "APP_NAME": "AZ Halal Marts",
     "APP_ENV": "production",
     "APP_KEY": "base64:XVWsOuD2eQ2/bqJ0AL7W1dARHbxB9I9I8/lyUB+o3z0=",
-    "APP_DEBUG": "false",
+    "APP_DEBUG": "true",
     "DB_CONNECTION": "mysql",
     "DB_HOST": "mysql-2a2de1de-muhammad-b715.b.aivencloud.com",
     "DB_PORT": "15652",
@@ -54,6 +54,7 @@
     "CACHE_STORE": "array",
     "CACHE_DRIVER": "array",
     "LOG_CHANNEL": "stderr",
+    "LOG_LEVEL": "debug",
     "SESSION_DRIVER": "cookie"
   }
 }
