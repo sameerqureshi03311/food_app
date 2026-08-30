@@ -44,7 +44,7 @@
     "DB_DATABASE": "defaultdb",
     "DB_USERNAME": "avnadmin",
     "DB_PASSWORD": "AVNS_Kt4AwNF4yIdT3oyxW72",
-    "MYSQL_ATTR_SSL_CA": "/etc/pki/tls/certs/ca-bundle.crt",
+    "MYSQL_ATTR_SSL_VERIFY_SERVER_CERT": "false",
     "APP_CONFIG_CACHE": "/tmp/bootstrap/cache/config.php",
     "APP_EVENTS_CACHE": "/tmp/bootstrap/cache/events.php",
     "APP_PACKAGES_CACHE": "/tmp/bootstrap/cache/packages.php",
