@@ -1,12 +1,15 @@
 <?php
 
+$storagePath = '/tmp/storage';
+$bootstrapCachePath = '/tmp/bootstrap/cache';
+
 // Serverless /tmp writable directory setup
 $writableDirs = [
-    '/tmp/storage/framework/views',
-    '/tmp/storage/framework/cache/data',
-    '/tmp/storage/framework/sessions',
-    '/tmp/storage/logs',
-    '/tmp/bootstrap/cache',
+    $storagePath . '/framework/views',
+    $storagePath . '/framework/cache/data',
+    $storagePath . '/framework/sessions',
+    $storagePath . '/logs',
+    $bootstrapCachePath,
 ];
 
 foreach ($writableDirs as $dir) {
@@ -15,15 +18,24 @@ foreach ($writableDirs as $dir) {
     }
 }
 
-putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
-putenv('APP_CONFIG_CACHE=/tmp/bootstrap/cache/config.php');
-putenv('APP_EVENTS_CACHE=/tmp/bootstrap/cache/events.php');
-putenv('APP_PACKAGES_CACHE=/tmp/bootstrap/cache/packages.php');
-putenv('APP_ROUTES_CACHE=/tmp/bootstrap/cache/routes.php');
-putenv('APP_SERVICES_CACHE=/tmp/bootstrap/cache/services.php');
+// Redirect storage and bootstrap cache paths to writable /tmp
+putenv("LARAVEL_STORAGE_PATH={$storagePath}");
+$_ENV['LARAVEL_STORAGE_PATH'] = $storagePath;
+$_SERVER['LARAVEL_STORAGE_PATH'] = $storagePath;
 
-// If using SQLite database, copy pre-seeded database to writable /tmp
-if (!getenv('DB_CONNECTION') || getenv('DB_CONNECTION') === 'sqlite') {
+putenv("VIEW_COMPILED_PATH={$storagePath}/framework/views");
+$_ENV['VIEW_COMPILED_PATH'] = "{$storagePath}/framework/views";
+$_SERVER['VIEW_COMPILED_PATH'] = "{$storagePath}/framework/views";
+
+putenv("APP_CONFIG_CACHE={$bootstrapCachePath}/config.php");
+putenv("APP_EVENTS_CACHE={$bootstrapCachePath}/events.php");
+putenv("APP_PACKAGES_CACHE={$bootstrapCachePath}/packages.php");
+putenv("APP_ROUTES_CACHE={$bootstrapCachePath}/routes.php");
+putenv("APP_SERVICES_CACHE={$bootstrapCachePath}/services.php");
+
+// SQLite database handling (fallback for zero-config client previews)
+$dbConnection = getenv('DB_CONNECTION') ?: ($_ENV['DB_CONNECTION'] ?? 'sqlite');
+if ($dbConnection === 'sqlite') {
     $dbFile = '/tmp/database.sqlite';
     if (!file_exists($dbFile)) {
         $sourceDb = __DIR__ . '/../database/database.sqlite';
@@ -38,5 +50,5 @@ if (!getenv('DB_CONNECTION') || getenv('DB_CONNECTION') === 'sqlite') {
     $_SERVER['DB_DATABASE'] = $dbFile;
 }
 
-// Forward execution to Laravel entrypoint
+// Forward execution to Laravel public entrypoint
 require __DIR__ . '/../public/index.php';
