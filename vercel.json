@@ -34,8 +34,11 @@
     }
   ],
   "env": {
+    "APP_NAME": "AZ Halal Marts",
     "APP_ENV": "production",
+    "APP_KEY": "base64:XVWsOuD2eQ2/bqJ0AL7W1dARHbxB9I9I8/lyUB+o3z0=",
     "APP_DEBUG": "false",
+    "DB_CONNECTION": "sqlite",
     "APP_CONFIG_CACHE": "/tmp/bootstrap/cache/config.php",
     "APP_EVENTS_CACHE": "/tmp/bootstrap/cache/events.php",
     "APP_PACKAGES_CACHE": "/tmp/bootstrap/cache/packages.php",
