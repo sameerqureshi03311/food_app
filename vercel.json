@@ -55,6 +55,10 @@
     "CACHE_DRIVER": "array",
     "LOG_CHANNEL": "stderr",
     "LOG_LEVEL": "debug",
-    "SESSION_DRIVER": "cookie"
+    "SESSION_DRIVER": "cookie",
+    "PAYPAL_MODE": "sandbox",
+    "PAYPAL_CLIENT_ID": "AYoz2QbEUlv8YXqcn80feW1BLDQNJvUWn1MG6pAFt4VJz1k3JSfvbJY4MkOJVW0HIKVOg-D46KTZckAo",
+    "PAYPAL_CLIENT_SECRET": "ENa2cmMKfG7b4OKbxdSziFFbrkaPRYzXZXvMMlzULTfIpDZAE8l7l87d4BMsbd9xo0t_8sqeSzxrBFnC",
+    "PAYPAL_CURRENCY": "USD"
   }
 }

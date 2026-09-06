@@ -157,4 +157,64 @@ class PageTest extends TestCase
         $response->assertSee('Order Confirmed');
         $response->assertSee('AZ-ORD-1001');
     }
+
+    public function test_paypal_create_order_calculates_total(): void
+    {
+        $response = $this->postJson('/checkout/paypal/create', [
+            'delivery_type' => 'delivery',
+            'items' => [
+                [
+                    'id' => 1,
+                    'name' => 'T-Bone Steak',
+                    'price' => 20.00,
+                    'quantity' => 2,
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'amount' => 45.00, // 40 subtotal + 5 delivery
+            'currency' => 'USD',
+        ]);
+    }
+
+    public function test_paypal_capture_creates_paid_order(): void
+    {
+        $response = $this->postJson('/checkout/paypal/capture', [
+            'customer_name' => 'Hamza Ali',
+            'customer_email' => 'hamza@example.com',
+            'customer_phone' => '919-555-9988',
+            'delivery_address' => '450 Davis Drive',
+            'city' => 'Cary',
+            'postal_code' => '27519',
+            'delivery_type' => 'delivery',
+            'transaction_id' => 'PAYPAL-TXN-12345',
+            'paypal_order_id' => 'PAYPAL-ORD-98765',
+            'payer_details' => [
+                'payer_id' => 'PAYER-123',
+                'payer_email' => 'hamza@example.com',
+            ],
+            'items' => [
+                [
+                    'id' => 1,
+                    'name' => 'T-Bone Steak',
+                    'price' => 30.00,
+                    'quantity' => 2,
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['success', 'order_number', 'redirect']);
+
+        $this->assertDatabaseHas('orders', [
+            'customer_name' => 'Hamza Ali',
+            'payment_method' => 'paypal',
+            'payment_status' => 'paid',
+            'transaction_id' => 'PAYPAL-TXN-12345',
+            'paypal_order_id' => 'PAYPAL-ORD-98765',
+        ]);
+    }
 }
