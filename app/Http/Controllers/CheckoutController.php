@@ -28,7 +28,7 @@ class CheckoutController extends Controller
             'payment_method' => 'required|in:cash_on_delivery,card,online_payment,online',
             'notes' => 'nullable|string|max:1000',
             'items' => 'required|array|min:1',
-            'items.*.id' => 'required|integer',
+            'items.*.id' => 'required',
             'items.*.name' => 'required|string',
             'items.*.price' => 'required|numeric',
             'items.*.quantity' => 'required|integer|min:1',
@@ -65,7 +65,7 @@ class CheckoutController extends Controller
         foreach ($validated['items'] as $item) {
             OrderItem::create([
                 'order_id' => $order->id,
-                'product_id' => $item['id'],
+                'product_id' => is_numeric($item['id']) ? (int) $item['id'] : null,
                 'product_name' => $item['name'],
                 'price' => $item['price'],
                 'quantity' => $item['quantity'],
@@ -127,7 +127,6 @@ class CheckoutController extends Controller
             'paypal_order_id' => 'nullable|string|max:100',
             'payer_details' => 'nullable|array',
             'items' => 'required|array|min:1',
-            'items.*.id' => 'required|integer',
             'items.*.id' => 'required',
             'items.*.name' => 'required|string',
             'items.*.price' => 'required|numeric',
@@ -172,7 +171,6 @@ class CheckoutController extends Controller
         foreach ($validated['items'] as $item) {
             OrderItem::create([
                 'order_id' => $order->id,
-                'product_id' => $item['id'],
                 'product_id' => is_numeric($item['id']) ? (int) $item['id'] : null,
                 'product_name' => $item['name'],
                 'price' => $item['price'],
