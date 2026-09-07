@@ -49,10 +49,6 @@
                                         <input class="form-check-input" type="radio" name="delivery_type" id="dt_delivery" value="delivery" checked>
                                         <label class="form-check-label text-parchment" for="dt_delivery">Home Delivery (Free within 10 min)</label>
                                     </div>
-                                    {{-- <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="delivery_type" id="dt_pickup" value="pickup">
-                                        <label class="form-check-label text-parchment" for="dt_pickup">Store Pickup (Cary)</label>
-                                    </div> --}}
                                 </div>
                             </div>
 
@@ -475,11 +471,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!validateCustomerForm()) return;
 
         const { total } = getCartTotal();
-        const name = form.querySelector('[name="customer_name"]')?.value.trim() || 'Customer';
-        const email = form.querySelector('[name="customer_email"]')?.value.trim() || 'buyer@sandbox.paypal.com';
-        const address = form.querySelector('[name="delivery_address"]')?.value.trim() || 'Store Pickup (716 Slash Pine Dr)';
-        const city = form.querySelector('[name="city"]')?.value.trim() || 'Cary';
-        const zip = form.querySelector('[name="postal_code"]')?.value.trim() || '27519';
+        const nameVal = form.querySelector('[name="customer_name"]')?.value.trim() || 'Customer';
+        const emailVal = form.querySelector('[name="customer_email"]')?.value.trim() || 'buyer@sandbox.paypal.com';
+        const addressVal = form.querySelector('[name="delivery_address"]')?.value.trim() || 'Store Pickup (716 Slash Pine Dr)';
+        const cityVal = form.querySelector('[name="city"]')?.value.trim() || 'Cary';
+        const zipVal = form.querySelector('[name="postal_code"]')?.value.trim() || '27519';
 
         const amountEl = document.getElementById('paypalModalAmount');
         const custEl = document.getElementById('paypalModalCustomer');
@@ -487,9 +483,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const addrEl = document.getElementById('paypalModalAddress');
 
         if (amountEl) amountEl.textContent = '$' + total.toFixed(2) + ' USD';
-        if (custEl) custEl.textContent = name;
-        if (emailEl) emailEl.textContent = email;
-        if (addrEl) addrEl.textContent = address + ', ' + city + ' ' + zip;
+        if (custEl) custEl.textContent = nameVal;
+        if (emailEl) emailEl.textContent = emailVal;
+        if (addrEl) addrEl.textContent = addressVal + ', ' + cityVal + ' ' + zipVal;
 
         const statusBox = document.getElementById('paypalModalStatus');
         if (statusBox) statusBox.classList.add('d-none');
@@ -502,8 +498,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (paypalModal) {
             paypalModal.show();
         } else {
-            // Direct processing fallback if modal library unavailable
-            executePaypalCapture();
+            // Fallback if bootstrap modal object not ready
+            const modalEl = document.getElementById('paypalSandboxModal');
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                new bootstrap.Modal(modalEl).show();
+            } else {
+                executePaypalCapture();
+            }
         }
     }
 
