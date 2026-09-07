@@ -128,6 +128,7 @@ class CheckoutController extends Controller
             'payer_details' => 'nullable|array',
             'items' => 'required|array|min:1',
             'items.*.id' => 'required|integer',
+            'items.*.id' => 'required',
             'items.*.name' => 'required|string',
             'items.*.price' => 'required|numeric',
             'items.*.quantity' => 'required|integer|min:1',
@@ -172,6 +173,7 @@ class CheckoutController extends Controller
             OrderItem::create([
                 'order_id' => $order->id,
                 'product_id' => $item['id'],
+                'product_id' => is_numeric($item['id']) ? (int) $item['id'] : null,
                 'product_name' => $item['name'],
                 'price' => $item['price'],
                 'quantity' => $item['quantity'],

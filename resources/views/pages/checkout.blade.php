@@ -466,84 +466,88 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnPaypalExpress) btnPaypalExpress.addEventListener('click', openPaypalSandboxCheckout);
     if (btnPaypalCard) btnPaypalCard.addEventListener('click', openPaypalSandboxCheckout);
 
-    async function executePaypalCapture() {}
-
     // Complete PayPal Capture Flow
-    // async function executePaypalCapture() {
-    //     if (!validateCustomerForm()) return;
+    async function executePaypalCapture() {
+        if (!validateCustomerForm()) return;
 
-    //     const items = window.AZCart ? window.AZCart.items : [];
-    //     const formData = new FormData(form);
-    //     const randId = Math.random().toString(36).substring(2, 10).toUpperCase();
-    //     const txnId = 'PP-SANDBOX-' + randId;
+        const items = window.AZCart ? window.AZCart.items : [];
+        if (!items || items.length === 0) {
+            alert('Your cart is empty. Please add items to your cart.');
+            return;
+        }
 
-    //     const statusBox = document.getElementById('paypalModalStatus');
-    //     const statusText = document.getElementById('paypalModalStatusText');
-    //     if (statusBox) statusBox.classList.remove('d-none');
-    //     if (statusText) statusText.textContent = 'Authorizing PayPal Payment ($' + getCartTotal().total.toFixed(2) + ')...';
+        const formData = new FormData(form);
+        const randId = Math.random().toString(36).substring(2, 10).toUpperCase();
+        const txnId = 'PP-SANDBOX-' + randId;
 
-    //     if (btnConfirmPaypalPayment) {
-    //         btnConfirmPaypalPayment.disabled = true;
-    //         btnConfirmPaypalPayment.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status"></div> <span>Processing PayPal Authorization...</span>';
-    //     }
+        const statusBox = document.getElementById('paypalModalStatus');
+        const statusText = document.getElementById('paypalModalStatusText');
+        if (statusBox) statusBox.classList.remove('d-none');
+        if (statusText) statusText.textContent = 'Authorizing PayPal Payment ($' + getCartTotal().total.toFixed(2) + ')...';
 
-    //     const capturePayload = {
-    //         customer_name: formData.get('customer_name'),
-    //         customer_email: formData.get('customer_email'),
-    //         customer_phone: formData.get('customer_phone'),
-    //         delivery_address: formData.get('delivery_address'),
-    //         city: formData.get('city'),
-    //         postal_code: formData.get('postal_code'),
-    //         delivery_type: formData.get('delivery_type'),
-    //         notes: formData.get('notes'),
-    //         paypal_order_id: 'PP-ORD-' + randId,
-    //         transaction_id: txnId,
-    //         payer_details: {
-    //             payer_id: 'PAYER-' + randId,
-    //             payer_email: formData.get('customer_email'),
-    //             payer_name: formData.get('customer_name'),
-    //             channel: 'PayPal Express Sandbox',
-    //             status: 'COMPLETED'
-    //         },
-    //         items: items,
-    //     };
+        if (btnConfirmPaypalPayment) {
+            btnConfirmPaypalPayment.disabled = true;
+            btnConfirmPaypalPayment.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status"></div> <span>Processing PayPal Authorization...</span>';
+        }
 
-    //     try {
-    //         const response = await fetch('{{ route('checkout.paypal.capture') }}', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Accept': 'application/json',
-    //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-    //             },
-    //             body: JSON.stringify(capturePayload)
-    //         });
+        const capturePayload = {
+            customer_name: formData.get('customer_name'),
+            customer_email: formData.get('customer_email'),
+            customer_phone: formData.get('customer_phone'),
+            delivery_address: formData.get('delivery_address'),
+            city: formData.get('city'),
+            postal_code: formData.get('postal_code'),
+            delivery_type: formData.get('delivery_type'),
+            notes: formData.get('notes'),
+            paypal_order_id: 'PP-ORD-' + randId,
+            transaction_id: txnId,
+            payer_details: {
+                payer_id: 'PAYER-' + randId,
+                payer_email: formData.get('customer_email'),
+                payer_name: formData.get('customer_name'),
+                channel: 'PayPal Express Sandbox',
+                status: 'COMPLETED'
+            },
+            items: items,
+        };
 
-    //         const data = await response.json();
-    //         if (data.success && data.redirect) {
-    //             if (statusText) statusText.textContent = 'Payment Approved! Redirecting to confirmation...';
-    //             if (window.AZCart) window.AZCart.clear();
-    //             setTimeout(() => {
-    //                 window.location.href = data.redirect;
-    //             }, 600);
-    //         } else {
-    //             alert('Payment authorization failed. Please try again.');
-    //             if (statusBox) statusBox.classList.add('d-none');
-    //             if (btnConfirmPaypalPayment) {
-    //                 btnConfirmPaypalPayment.disabled = false;
-    //                 btnConfirmPaypalPayment.innerHTML = '<i class="bi bi-check-circle-fill"></i> <span>Complete Sandbox Payment</span>';
-    //             }
-    //         }
-    //     } catch (err) {
-    //         console.error(err);
-    //         alert('An error occurred during PayPal authorization.');
-    //         if (statusBox) statusBox.classList.add('d-none');
-    //         if (btnConfirmPaypalPayment) {
-    //             btnConfirmPaypalPayment.disabled = false;
-    //             btnConfirmPaypalPayment.innerHTML = '<i class="bi bi-check-circle-fill"></i> <span>Complete Sandbox Payment</span>';
-    //         }
-    //     }
-    // }
+        try {
+            const response = await fetch('{{ route('checkout.paypal.capture') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(capturePayload)
+            });
+
+            const data = await response.json();
+            if (data.success && data.redirect) {
+                if (statusText) statusText.textContent = 'Payment Approved! Redirecting to confirmation...';
+                if (window.AZCart) window.AZCart.clear();
+                setTimeout(() => {
+                    window.location.href = data.redirect;
+                }, 600);
+            } else {
+                const errMsg = data.message || 'Payment authorization failed. Please check inputs and try again.';
+                alert(errMsg);
+                if (statusBox) statusBox.classList.add('d-none');
+                if (btnConfirmPaypalPayment) {
+                    btnConfirmPaypalPayment.disabled = false;
+                    btnConfirmPaypalPayment.innerHTML = '<i class="bi bi-check-circle-fill"></i> <span>Complete Sandbox Payment</span>';
+                }
+            }
+        } catch (err) {
+            console.error('PayPal capture error:', err);
+            alert('An error occurred during PayPal authorization: ' + (err.message || 'Network error'));
+            if (statusBox) statusBox.classList.add('d-none');
+            if (btnConfirmPaypalPayment) {
+                btnConfirmPaypalPayment.disabled = false;
+                btnConfirmPaypalPayment.innerHTML = '<i class="bi bi-check-circle-fill"></i> <span>Complete Sandbox Payment</span>';
+            }
+        }
+    }
 
     if (btnConfirmPaypalPayment) {
         btnConfirmPaypalPayment.addEventListener('click', executePaypalCapture);
