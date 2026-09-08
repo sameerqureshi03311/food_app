@@ -58,7 +58,7 @@
                     ? (request('search') ? route('products', ['search' => request('search')]) : route('products'))
                     : route('products', array_filter(['category' => $cat, 'search' => request('search')]));
             @endphp
-            <a href="{{ $catUrl }}" class="btn-filter {{ $isActive ? 'active' : '' }}">
+            <a href="{{ $catUrl }}" class="btn-filter {{ $isActive ? 'active' : '' }} text-decoration-none">
                 {{ $cat }}
             </a>
             @endforeach
@@ -144,6 +144,7 @@
         </div>
         @endif
         @endif
+
 
     </div>
 </section>
