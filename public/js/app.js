@@ -122,11 +122,11 @@
           `;
         } else {
           container.innerHTML = `
-            <button type="button" class="btn-gold-outline py-2 px-3 btn-add-to-cart" 
-              data-id="${id}" 
-              data-name="${name}" 
-              data-price="${price}" 
-              data-sku="${sku}" 
+            <button type="button" class="btn-gold-outline py-2 px-3 btn-add-to-cart"
+              data-id="${id}"
+              data-name="${name}"
+              data-price="${price}"
+              data-sku="${sku}"
               data-img="${img}"
               style="font-size: 10px; letter-spacing: 0.2em;">
               <span>Add to Cart</span>
@@ -252,7 +252,7 @@
   window.addEventListener('scroll', handleNavScroll);
 
   // Global Init
-  document.addEventListener('DOMContentLoaded', () => {
+  function initApp() {
     handleNavScroll();
     Cart.init();
 
@@ -267,16 +267,22 @@
 
     function filterCatalog() {
       let visibleCount = 0;
+      const selectedCat = (currentCategory || 'All').trim().toLowerCase();
+
       productCards.forEach(card => {
-        const cat = card.dataset.category || '';
+        const cat = (card.dataset.category || '').trim().toLowerCase();
         const name = (card.dataset.name || '').toLowerCase();
         const desc = (card.dataset.desc || '').toLowerCase();
 
-        const matchCat = (currentCategory === 'All' || cat.toLowerCase() === currentCategory.toLowerCase());
+        const matchCat = (selectedCat === 'all' || cat === selectedCat);
         const matchSearch = (!searchQuery || name.includes(searchQuery) || desc.includes(searchQuery));
 
         if (matchCat && matchSearch) {
-          card.style.display = 'block';
+          card.style.display = '';
+          card.style.opacity = '1';
+          card.style.visibility = 'visible';
+          card.style.transform = 'none';
+          card.classList.add('aos-animate');
           visibleCount++;
         } else {
           card.style.display = 'none';
@@ -286,11 +292,16 @@
       if (noResults) {
         noResults.style.display = (visibleCount === 0) ? 'block' : 'none';
       }
+
+      if (typeof AOS !== 'undefined') {
+        AOS.refresh();
+      }
     }
 
     if (filterButtons.length > 0) {
       filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
           filterButtons.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           currentCategory = btn.dataset.filter || 'All';
@@ -305,6 +316,22 @@
         filterCatalog();
       });
     }
+
+    // Support ?category= query param on initial load
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const categoryParam = urlParams.get('category');
+      if (categoryParam && filterButtons.length > 0) {
+        filterButtons.forEach(btn => {
+          if ((btn.dataset.filter || '').trim().toLowerCase() === categoryParam.trim().toLowerCase()) {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCategory = btn.dataset.filter;
+          }
+        });
+        filterCatalog();
+      }
+    } catch (e) {}
 
     // Gallery Lightbox Modal
     const galleryItems = document.querySelectorAll('.gallery-item');
@@ -361,7 +388,13 @@
         });
       });
     }
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
 
   window.AZCart = Cart;
 })();

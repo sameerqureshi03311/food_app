@@ -315,6 +315,10 @@ p, .text-parchment-dim, .text-parchment-muted, .section-desc, .lead, li, label, 
 
 /* Category & Tag Filter Buttons */
 .btn-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   background: transparent;
   border: 1px solid var(--border-gold);
   color: var(--parchment-dim);
@@ -622,4 +626,59 @@ p, .text-parchment-dim, .text-parchment-muted, .section-desc, .lead, li, label, 
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gold);
+}
+
+/* ========================================================
+   LUXURY THEME PAGINATION
+   ======================================================== */
+.pagination-wrapper {
+  width: 100%;
+}
+
+.pagination {
+  margin: 0;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination .page-item .page-link {
+  background-color: var(--obsidian-card);
+  border: 1px solid var(--border-gold);
+  color: var(--parchment);
+  border-radius: 4px !important;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  transition: all 0.25s ease;
+  box-shadow: none;
+}
+
+.pagination .page-item .page-link:hover {
+  background-color: rgba(212, 175, 55, 0.18);
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--gold) !important;
+  border-color: var(--gold) !important;
+  color: var(--obsidian) !important;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+}
+
+.pagination .page-item.disabled .page-link {
+  background-color: rgba(13, 23, 13, 0.45);
+  border-color: rgba(212, 175, 55, 0.1);
+  color: var(--parchment-muted);
+  opacity: 0.5;
+}
+
+.pagination-wrapper .text-muted {
+  color: var(--parchment-dim) !important;
+}
+
+.pagination-wrapper .text-muted .fw-semibold {
+  color: var(--gold);
 }
